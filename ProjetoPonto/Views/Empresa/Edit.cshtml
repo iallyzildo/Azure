@@ -1,0 +1,93 @@
+﻿@model ProjetoPonto.Entity.Empresa
+
+@{
+    ViewBag.Title = "Edit";
+}
+<div class="content-section-a">
+        @using (Html.BeginForm())
+        {
+            <div class="form-horizontal">
+                <h4>Cadastro de Empresas</h4>
+                <hr />
+        @Html.HiddenFor(model => model.IdEmpresa)
+
+       <div class="form-group">
+            @Html.LabelFor(model => model.RazaoSocial, new { @class = "control-label col-md-5" })
+            <div class="col-md-3">
+                @Html.TextBoxFor(model => model.RazaoSocial, new { @class = "form-control" })
+            </div>
+        </div>
+
+       <div class="form-group">
+            @Html.LabelFor(model => model.CNPJ, new { @class = "control-label col-md-5" })
+            <div class="col-md-3">
+                @Html.TextBoxFor(model => model.CNPJ, new { @class = "form-control" })
+            </div>
+        </div>
+         
+        <div class="form-group">
+             <span class="control-label col-md-5">Estado</span>
+           <div class="col-md-3">
+            @Html.DropDownList("IdEstado",null, new { @class = "form-control" })
+                
+        </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.IdCidade, new { @class = "control-label col-md-5" })
+          <div class="col-md-3">
+            @Html.DropDownList("IdCidade",null, new { @class = "form-control" })
+        </div>
+             </div>
+
+        
+          <div class="form-group">
+                    <label class="col-md-5 control-label" for="singlebutton"></label>
+                    <div class="col-md-4">
+            <input type="submit" value="Save" class="btn btn-primary"  onclick="return validar();" />
+          </div>
+        </div>
+    </div>
+}
+
+<div>
+     <button class="btn btn-primary" onclick="location.href='@Url.Action("Index", "Empresa")'">Voltar</button>
+</div>
+
+@if (ViewBag.Erro != null && ViewBag.Erro != "")
+{
+    <script>
+        alert('@Html.Raw(ViewBag.Erro)');
+    </script>
+}
+<script>
+    function validar() {
+
+        if ($("#RazaoSocial").val() == "") {
+            alert("Razao Social é obrigatória");
+            return false;
+        }
+        if ($("#CNPJ").val() == "") {
+            alert("CNPJ é obrigatório");
+            return false;
+        }
+
+        return true;
+    }
+    $("#IdEstado").change(function () {
+        $.ajax({
+            type: "POST",
+            dataType: "JSON",
+            url: "../ListaCidades",
+            data: { idEstado: $("#IdEstado").val() },
+            success: function (dados) {
+                var html = "";
+                $.each(dados["cidades"], function (idx, obj) {
+                    html = html + "<option value='" + obj.Value + "'>" + obj.Text + "</option>";
+                    //alert(obj.Value + " " + obj.Text);
+                });
+                $("#IdCidade").html(html);
+            }
+        });
+    });
+</script>
